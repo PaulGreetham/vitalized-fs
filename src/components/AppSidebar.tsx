@@ -4,7 +4,6 @@ import {
   CreditCard,
   FileText,
   Home,
-  Settings,
   User2,
 } from "lucide-react";
 import {
