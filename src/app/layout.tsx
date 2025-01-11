@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -8,7 +10,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Vitalized FS",
-  description: "Bringing financial statement to life.",
+  description: "Bringing financial statements to life.",
 };
 
 export default function RootLayout({
@@ -18,7 +20,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={geist.className}>{children}</body>
+      <body className={geist.className}>
+        <SidebarProvider>
+          <AppSidebar />
+          <main className="p-8">
+            <SidebarTrigger />
+            {children}
+          </main>
+        </SidebarProvider>
+      </body>
     </html>
   );
 }
