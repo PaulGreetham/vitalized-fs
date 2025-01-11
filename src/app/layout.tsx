@@ -8,7 +8,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "Vitalized FS",
-  description: "A modern web application",
+  description: "Bringing financial statement to life.",
 };
 
 export default function RootLayout({
