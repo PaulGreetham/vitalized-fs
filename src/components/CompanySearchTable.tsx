@@ -29,7 +29,6 @@ function getPageNumbers(currentPage: number, totalPages: number) {
   const delta = 2;
   const range: number[] = [];
   const rangeWithDots: (number | string)[] = [];
-  let l: number;
 
   range.push(1);
 
@@ -44,16 +43,17 @@ function getPageNumbers(currentPage: number, totalPages: number) {
   }
   range.push(totalPages);
 
-  for (let i = 0; i < range.length; i++) {
-    if (l) {
-      if (range[i] - l === 2) {
-        rangeWithDots.push(l + 1);
-      } else if (range[i] - l !== 1) {
+  let prev: number | null = null;
+  for (const i of range) {
+    if (prev) {
+      if (i - prev === 2) {
+        rangeWithDots.push(prev + 1);
+      } else if (i - prev !== 1) {
         rangeWithDots.push('...');
       }
     }
-    rangeWithDots.push(range[i]);
-    l = range[i];
+    rangeWithDots.push(i);
+    prev = i;
   }
 
   return rangeWithDots;
