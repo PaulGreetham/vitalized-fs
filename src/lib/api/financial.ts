@@ -4,10 +4,17 @@ import { CompanySearchResult } from "@/types/search";
 const API_KEY = process.env.NEXT_PUBLIC_FMP_API_KEY;
 const BASE_URL = "https://financialmodelingprep.com/api/v3";
 
-export async function searchCompanies(query: string, limit: number = 10): Promise<CompanySearchResult[]> {
+export type Exchange = 'ALL' | 'NYSE' | 'NASDAQ' | 'AMEX' | 'TSX' | 'LSE';
+
+export async function searchCompanies(
+  query: string, 
+  limit: number = 10,
+  exchange?: Exclude<Exchange, 'ALL'>
+): Promise<CompanySearchResult[]> {
   try {
+    const exchangeParam = exchange ? `&exchange=${exchange}` : '';
     const response = await fetch(
-      `${BASE_URL}/search?query=${query}&limit=${limit}&apikey=${API_KEY}`
+      `${BASE_URL}/search?query=${query}&limit=${limit}${exchangeParam}&apikey=${API_KEY}`
     );
 
     if (!response.ok) {
