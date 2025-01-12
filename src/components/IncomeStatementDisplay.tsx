@@ -3,7 +3,7 @@ import { IncomeStatement } from "@/types/financial";
 interface Props {
   data: IncomeStatement[];
   isLoading?: boolean;
-  error?: string;
+  error?: string | null;
 }
 
 export function IncomeStatementDisplay({ data, isLoading, error }: Props) {

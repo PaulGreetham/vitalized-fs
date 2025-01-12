@@ -1,122 +1,69 @@
 import {
-  BarChart3,
-  ChevronDown,
-  CreditCard,
-  FileText,
   Home,
-  User2,
+  BarChart3,
+  Wallet,
+  LineChart,
 } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { CompanySearchResult } from "@/types/search";
 
-const menuItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    url: "/",
-  },
-  {
-    title: "Income Statement",
-    icon: FileText,
-    url: "/income-statement",
-  },
-  {
-    title: "Balance Sheet",
-    icon: CreditCard,
-    url: "/balance-sheet",
-  },
-  {
-    title: "Cash Flow",
-    icon: BarChart3,
-    url: "/cash-flow",
-  },
-];
+export interface AppSidebarProps {
+  selectedCompany: CompanySearchResult | null;
+}
 
-export function AppSidebar() {
+export function AppSidebar({ selectedCompany }: AppSidebarProps) {
+  const pathname = usePathname();
+
+  if (!selectedCompany) {
+    return null;
+  }
+
+  const links = [
+    {
+      href: `/overview/${selectedCompany.symbol}`,
+      label: "Overview",
+      icon: Home,
+      pattern: '/overview'
+    },
+    {
+      href: `/income/${selectedCompany.symbol}`,
+      label: "Income",
+      icon: BarChart3,
+      pattern: '/income'
+    },
+    {
+      href: `/balance/${selectedCompany.symbol}`,
+      label: "Balance Sheet",
+      icon: Wallet,
+      pattern: '/balance'
+    },
+    {
+      href: `/cash-flow/${selectedCompany.symbol}`,
+      label: "Cash Flow",
+      icon: LineChart,
+      pattern: '/cash-flow'
+    }
+  ];
+
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  Select Company
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Search Company</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Recent Companies</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Financial Statements</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> Settings
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem>
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
+    <div className="space-y-4 py-4">
+      <div className="px-3 py-2">
+        <div className="space-y-2 mt-6">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-gray-100 ${
+                pathname.includes(link.pattern) ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <link.icon className="h-4 w-4" />
+              <span>{link.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 } 
