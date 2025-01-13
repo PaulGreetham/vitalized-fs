@@ -70,7 +70,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
   const renderContent = () => {
     if (pathname.includes('/overview')) {
       return (
-        <div className="grid gap-6 mt-8">
+        <div className="grid gap-6 mt-10">
           <h2 className="text-2xl font-semibold">Company Overview</h2>
           <div className="grid gap-4">
             <div className="p-6 border rounded-lg bg-white shadow-sm">
