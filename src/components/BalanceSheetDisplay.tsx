@@ -22,7 +22,7 @@ export function BalanceSheetDisplay({ data, isLoading, error }: Props) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-6">Balance Sheet for {latestStatement.symbol}</h2>
+      <h2 className="text-2xl font-bold mb-4">Balance Sheet for {latestStatement.symbol}</h2>
       <BalanceSheetChart data={balanceData} />
       
       <div className="grid gap-6">

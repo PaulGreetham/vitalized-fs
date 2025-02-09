@@ -22,29 +22,9 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
     { type: 'Net Income', amount: latestStatement.netIncome, fill: 'var(--color-net-income)' },
   ];
 
-  // const expensesData = [
-  //   { name: 'Cost of Revenue', total: latestStatement.costOfRevenue },
-  //   { name: 'R&D Expenses', total: latestStatement.researchAndDevelopmentExpenses },
-  //   { name: 'SG&A Expenses', total: latestStatement.sellingGeneralAndAdministrativeExpenses },
-  //   { name: 'Other Expenses', total: latestStatement.otherExpenses },
-  //   { name: 'Operating Expenses', total: latestStatement.operatingExpenses },
-  //   { name: 'Cost and Expenses', total: latestStatement.costAndExpenses },
-  //   { name: 'Interest Expense', total: latestStatement.interestExpense },
-  //   { name: 'Depreciation and Amortization', total: latestStatement.depreciationAndAmortization },
-  //   { name: 'Income Tax Expense', total: latestStatement.incomeTaxExpense },
-  // ];
-
-  // const ratiosData = [
-  //   { name: 'Gross Profit Ratio', value: latestStatement.grossProfitRatio },
-  //   { name: 'EBITDA Ratio', value: latestStatement.ebitdaratio },
-  //   { name: 'Operating Income Ratio', value: latestStatement.operatingIncomeRatio },
-  //   { name: 'Income Before Tax Ratio', value: latestStatement.incomeBeforeTaxRatio },
-  //   { name: 'Net Income Ratio', value: latestStatement.netIncomeRatio },
-  // ];
-
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-6">Income Statement for {latestStatement.symbol}</h2>
+      <h2 className="text-2xl font-bold mb-4">Income Statement for {latestStatement.symbol}</h2>
       <IncomeChart data={incomeData} />
       <div className="grid gap-6">
         

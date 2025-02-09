@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Card, Title } from "@tremor/react";
 
 interface CashFlowChartProps {
   data: {
@@ -10,21 +10,28 @@ interface CashFlowChartProps {
 
 export function CashFlowChart({ data }: CashFlowChartProps) {
   const formattedData = data.map(item => ({
-    ...item,
-    amount: item.amount / 1_000_000, // Convert to millions
+    name: item.type,
+    Amount: item.amount / 1_000_000, // Convert to millions
   }));
 
   return (
-    <div className="h-[400px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={formattedData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="type" />
-          <YAxis label={{ value: 'Millions ($)', angle: -90, position: 'insideLeft' }} />
-          <Tooltip formatter={(value: number) => `$${value.toFixed(2)}M`} />
-          <Bar dataKey="amount" fill="var(--chart-1)" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <Card>
+      <Title>Cash Flow Overview</Title>
+      <BarChart
+        className="h-48 mt-4"
+        data={formattedData}
+        index="name"
+        categories={["Amount"]}
+        colors={["blue"]}
+        valueFormatter={(number) => `$${Intl.NumberFormat("us").format(number)}M`}
+        yAxisWidth={100}
+        showAnimation={true}
+        showLegend={false}
+        showTooltip={true}
+        showXAxis={true}
+        showYAxis={true}    
+        showGridLines={true}
+      />
+    </Card>
   );
 } 
