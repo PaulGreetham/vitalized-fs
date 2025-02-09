@@ -21,7 +21,7 @@ export function BalanceSheetChart({ data }: BalanceSheetChartProps) {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="type" />
           <YAxis label={{ value: 'Millions ($)', angle: -90, position: 'insideLeft' }} />
-          <Tooltip formatter={(value) => `$${value.toFixed(2)}M`} />
+          <Tooltip formatter={(value: number) => `$${value.toFixed(2)}M`} />
           <Bar dataKey="amount" fill="var(--chart-1)" />
         </BarChart>
       </ResponsiveContainer>
