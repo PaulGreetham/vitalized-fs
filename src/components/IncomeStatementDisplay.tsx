@@ -1,5 +1,5 @@
 import { IncomeStatement } from "@/types/financial";
-import { IncomeChart } from './IncomeChart';
+import { IncomeChart } from './charts/IncomeChart';
 
 interface Props {
   data: IncomeStatement[];

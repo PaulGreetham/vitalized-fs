@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { CompanySearchResult } from "@/types/search";
-import { IncomeStatement } from "@/types/financial";
-import { getIncomeStatement } from "@/lib/api/financial";
+import { IncomeStatement, BalanceSheet, CashFlowStatement } from "@/types/financial";
+import { getIncomeStatement, getBalanceSheet, getCashFlowStatement } from "@/lib/api/financial";
 import { CompanyHeader } from "./CompanyHeader";
 import { IncomeStatementDisplay } from './IncomeStatementDisplay';
 import { CompanyOverviewDisplay } from './CompanyOverviewDisplay';
-
+import { BalanceSheetDisplay } from "./BalanceSheetDisplay";
+import { CashFlowDisplay } from "./CashFlowDisplay";
 interface ContentDisplayProps {
   selectedCompany: CompanySearchResult | null;
 }
 
 export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
   const [financialData, setFinancialData] = useState<IncomeStatement[]>([]);
+  const [balanceSheetData, setBalanceSheetData] = useState<BalanceSheet[]>([]);
+  const [cashFlowData, setCashFlowData] = useState<CashFlowStatement[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pathname = usePathname();
@@ -32,6 +35,52 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Failed to fetch financial data');
         setFinancialData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [selectedCompany, pathname]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!selectedCompany) return;
+      
+      if (!pathname.includes('/balance')) return;
+
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const data = await getBalanceSheet(selectedCompany.symbol);
+        setBalanceSheetData(data);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to fetch balance sheet data');
+        setBalanceSheetData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [selectedCompany, pathname]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!selectedCompany) return;
+      
+      if (!pathname.includes('/cash-flow')) return;
+
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const data = await getCashFlowStatement(selectedCompany.symbol);
+        setCashFlowData(data);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to fetch cash flow data');
+        setCashFlowData([]);
       } finally {
         setIsLoading(false);
       }
@@ -85,8 +134,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     if (pathname.includes('/balance')) {
       return (
         <div className="grid gap-6 mt-10">
-          <h2 className="text-2xl font-semibold">Balance Sheet</h2>
-          <p>Balance sheet data will be displayed here</p>
+          <BalanceSheetDisplay data={balanceSheetData} isLoading={isLoading} error={error} />
         </div>
       );
     }
@@ -94,8 +142,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     if (pathname.includes('/cash-flow')) {
       return (
         <div className="grid gap-6 mt-10">
-          <h2 className="text-2xl font-semibold">Cash Flow Statement</h2>
-          <p>Cash flow data will be displayed here</p>
+          <CashFlowDisplay data={cashFlowData} isLoading={isLoading} error={error} />
         </div>
       );
     }

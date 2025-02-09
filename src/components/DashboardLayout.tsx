@@ -1,32 +1,19 @@
 'use client';
 
-import { GeistSans } from 'geist/font/sans';
-import "./globals.css";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { CompanySearchResult } from "@/types/search";
+import { getCompanyBySymbol } from "@/lib/api/financial";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
 import { CompanySearch } from "@/components/CompanySearch";
 import { ContentDisplay } from "@/components/ContentDisplay";
-import { useState, useEffect } from "react";
-import { CompanySearchResult } from "@/types/search";
-import { useRouter, usePathname } from "next/navigation";
-import { getCompanyBySymbol } from "@/lib/api/financial";
-import { cn } from "@/lib/utils";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function DashboardLayout() {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-
-  const isDashboard = pathname?.includes('/dashboard') || 
-                     pathname?.includes('/overview') || 
-                     pathname?.includes('/income') || 
-                     pathname?.includes('/balance') || 
-                     pathname?.includes('/cash-flow');
 
   const handleCompanySelect = (company: CompanySearchResult) => {
     console.log('Company selected:', company);
@@ -68,37 +55,26 @@ export default function RootLayout({
   }, [pathname, selectedCompany, router]);
 
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body className={cn(
-        GeistSans.className,
-        "antialiased",
-      )}>
-        {isDashboard ? (
-          <>
-            <Header />
-            <div className="fixed top-14 left-0 right-0 bg-white border-b z-40 px-8 py-4">
-              <CompanySearch 
-                onCompanySelect={handleCompanySelect}
-                selectedCompany={selectedCompany}
-              />
+    <>
+      <Header />
+      <div className="fixed top-14 left-0 right-0 bg-white border-b z-40 px-8 py-4">
+        <CompanySearch 
+          onCompanySelect={handleCompanySelect}
+          selectedCompany={selectedCompany}
+        />
+      </div>
+      <div className="fixed inset-0 pt-32">
+        <div className="flex h-full">
+          <SidebarProvider>
+            <div className="w-64 flex-none border-r bg-white">
+              <AppSidebar selectedCompany={selectedCompany} />
             </div>
-            <div className="fixed inset-0 pt-32">
-              <div className="flex h-full">
-                <SidebarProvider>
-                  <div className="w-64 flex-none border-r bg-white">
-                    <AppSidebar selectedCompany={selectedCompany} />
-                  </div>
-                  <main className="flex-1 overflow-y-auto pb-20">
-                    <ContentDisplay selectedCompany={selectedCompany} />
-                  </main>
-                </SidebarProvider>
-              </div>
-            </div>
-          </>
-        ) : (
-          children
-        )}
-      </body>
-    </html>
+            <main className="flex-1 overflow-y-auto pb-20">
+              <ContentDisplay selectedCompany={selectedCompany} />
+            </main>
+          </SidebarProvider>
+        </div>
+      </div>
+    </>
   );
 }

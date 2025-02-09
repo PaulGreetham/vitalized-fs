@@ -1,4 +1,4 @@
-import { IncomeStatement } from "@/types/financial";
+import { BalanceSheet, IncomeStatement, CashFlowStatement } from "@/types/financial";
 import { CompanySearchResult } from "@/types/search";
 
 const API_KEY = process.env.NEXT_PUBLIC_FMP_API_KEY;
@@ -121,6 +121,38 @@ export async function getIncomeStatement(symbol: string): Promise<IncomeStatemen
   
   if (!response.ok) {
     throw new Error('Failed to fetch income statement');
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function getBalanceSheet(symbol: string): Promise<BalanceSheet[]> {
+  if (!API_KEY) {
+    throw new Error('API key is not configured');
+  }
+
+  const url = `${BASE_URL}/balance-sheet-statement/${symbol}?limit=4&apikey=${API_KEY}`;
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch balance sheet');
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function getCashFlowStatement(symbol: string): Promise<CashFlowStatement[]> {
+  if (!API_KEY) {
+    throw new Error('API key is not configured');
+  }
+
+  const url = `${BASE_URL}/cash-flow-statement/${symbol}?limit=4&apikey=${API_KEY}`;
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch cash flow statement');
   }
 
   const data = await response.json();
