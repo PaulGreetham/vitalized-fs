@@ -1,4 +1,5 @@
-import { BarChart, Card, Title } from "@tremor/react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface BalanceSheetChartProps {
   data: {
@@ -11,27 +12,34 @@ interface BalanceSheetChartProps {
 export function BalanceSheetChart({ data }: BalanceSheetChartProps) {
   const formattedData = data.map(item => ({
     name: item.type,
-    Amount: item.amount / 1_000_000, // Convert to millions
+    value: item.amount / 1_000_000, // Convert to millions
   }));
 
   return (
     <Card>
-      <Title>Balance Sheet Overview</Title>
-      <BarChart
-        className="h-48 mt-4"
-        data={formattedData}
-        index="name"
-        categories={["Amount"]}
-        colors={["blue"]}
-        valueFormatter={(number) => `$${Intl.NumberFormat("us").format(number)}M`}
-        yAxisWidth={100}
-        showAnimation={true}
-        showLegend={false}
-        showTooltip={true}
-        showXAxis={true}
-        showYAxis={true}    
-        showGridLines={true}
-      />
+      <CardHeader>
+        <CardTitle>Balance Sheet Overview</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="h-48">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={formattedData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius)'
+                }}
+                formatter={(value: number) => `$${value.toLocaleString()}M`}
+              />
+              <Bar dataKey="value" fill="var(--chart-1)" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
     </Card>
   );
 } 
