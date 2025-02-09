@@ -74,7 +74,7 @@ export default function RootLayout({
   }, [pathname, selectedCompany, router]);
 
   return (
-    <html lang="en">
+    <html lang="en" className={geist.variable}>
       <body className={cn(
         geist.className,
         "antialiased",
