@@ -16,13 +16,22 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
-export default function RootLayout() {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
+  const isDashboard = pathname?.includes('/dashboard') || 
+                     pathname?.includes('/overview') || 
+                     pathname?.includes('/income') || 
+                     pathname?.includes('/balance') || 
+                     pathname?.includes('/cash-flow');
+
   const handleCompanySelect = (company: CompanySearchResult) => {
-    console.log('Company selected:', company);
     setSelectedCompany(company);
     router.push(`/overview/${company.symbol}`);
   };
@@ -63,33 +72,31 @@ export default function RootLayout() {
   return (
     <html lang="en">
       <body className={geist.className}>
-        {/* Fixed Header */}
-        <Header />
-        
-        {/* Fixed Search Bar */}
-        <div className="fixed top-14 left-0 right-0 bg-white border-b z-40 px-8 py-4">
-          <CompanySearch 
-            onCompanySelect={handleCompanySelect}
-            selectedCompany={selectedCompany}
-          />
-        </div>
-
-        {/* Main Layout Container */}
-        <div className="fixed inset-0 pt-32">
-          <div className="flex h-full">
-            <SidebarProvider>
-              {/* Static Sidebar */}
-              <div className="w-64 flex-none border-r bg-white">
-                <AppSidebar selectedCompany={selectedCompany} />
+        {isDashboard ? (
+          <>
+            <Header />
+            <div className="fixed top-14 left-0 right-0 bg-white border-b z-40 px-8 py-4">
+              <CompanySearch 
+                onCompanySelect={handleCompanySelect}
+                selectedCompany={selectedCompany}
+              />
+            </div>
+            <div className="fixed inset-0 pt-32">
+              <div className="flex h-full">
+                <SidebarProvider>
+                  <div className="w-64 flex-none border-r bg-white">
+                    <AppSidebar selectedCompany={selectedCompany} />
+                  </div>
+                  <main className="flex-1 overflow-y-auto pb-20">
+                    <ContentDisplay selectedCompany={selectedCompany} />
+                  </main>
+                </SidebarProvider>
               </div>
-              
-              {/* Scrollable Main Content */}
-              <main className="flex-1 overflow-y-auto pb-20">
-                <ContentDisplay selectedCompany={selectedCompany} />
-              </main>
-            </SidebarProvider>
-          </div>
-        </div>
+            </div>
+          </>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );
