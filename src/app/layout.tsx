@@ -11,9 +11,12 @@ import { useState, useEffect } from "react";
 import { CompanySearchResult } from "@/types/search";
 import { useRouter, usePathname } from "next/navigation";
 import { getCompanyBySymbol } from "@/lib/api/financial";
+import { cn } from "@/lib/utils";
 
 const geist = Geist({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-geist",
 });
 
 export default function RootLayout({
@@ -32,6 +35,7 @@ export default function RootLayout({
                      pathname?.includes('/cash-flow');
 
   const handleCompanySelect = (company: CompanySearchResult) => {
+    console.log('Company selected:', company);
     setSelectedCompany(company);
     router.push(`/overview/${company.symbol}`);
   };
@@ -71,7 +75,10 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={geist.className}>
+      <body className={cn(
+        geist.className,
+        "antialiased",
+      )}>
         {isDashboard ? (
           <>
             <Header />
