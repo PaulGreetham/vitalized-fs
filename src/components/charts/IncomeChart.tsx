@@ -11,7 +11,7 @@ interface IncomeChartProps {
   chartData: IncomeStatement[];
 }
 
-export function IncomeChart({ data, chartData }: IncomeChartProps) {
+export function IncomeChart({ chartData }: IncomeChartProps) {
   const timeSeriesData = chartData.map(item => ({
     year: new Date(item.date).getFullYear(),
     revenue: item.revenue / 1_000_000,

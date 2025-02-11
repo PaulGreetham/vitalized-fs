@@ -8,7 +8,6 @@ import { IncomeStatementDisplay } from './IncomeStatementDisplay';
 import { CompanyOverviewDisplay } from './CompanyOverviewDisplay';
 import { BalanceSheetDisplay } from "./BalanceSheetDisplay";
 import { CashFlowDisplay } from "./CashFlowDisplay";
-import { SpinnerShadcn } from "@/components/ui/spinner-shadcn";
 import { CircularProgress } from "@/components/ui/circular-progress";
 
 interface ContentDisplayProps {
