@@ -6,10 +6,9 @@ export function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-b from-blue-600 to-blue-800 text-white px-4 overflow-hidden">
       <div className="text-center max-w-4xl mx-auto relative z-10 pt-24">
-        <h1 className="text-6xl font-bold mb-6">Welcome to Vitalized FS</h1>
+        <h1 className="text-6xl font-bold mb-6">Vitalized FS</h1>
         <p className="text-xl mb-12 text-blue-100">
-          Your comprehensive financial analysis platform for exploring company financials, 
-          market data, and investment insights.
+          Search for listed companies key financial metrics.
         </p>
         <div className="space-y-4 mb-40">
           <Link href="/dashboard">
