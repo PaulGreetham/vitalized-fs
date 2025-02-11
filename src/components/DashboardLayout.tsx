@@ -16,7 +16,6 @@ export function DashboardLayout() {
   const pathname = usePathname();
 
   const handleCompanySelect = (company: CompanySearchResult) => {
-    console.log('Company selected:', company);
     setSelectedCompany(company);
     router.push(`/overview/${company.symbol}`);
   };
@@ -24,21 +23,16 @@ export function DashboardLayout() {
   // Extract company symbol from URL and set selected company if needed
   useEffect(() => {
     async function fetchCompanyDetails() {
-      console.log('Current pathname:', pathname);
-      console.log('Current selectedCompany:', selectedCompany);
       
       if (pathname && selectedCompany === null) {
         const match = pathname.match(/\/(overview|income|balance|cash-flow)\/([A-Z]+)(?:\.[A-Z])?/);
-        console.log('URL match:', match);
         
         if (match && match[2]) {
           try {
             const symbol = match[2];
-            console.log('Fetching details for symbol:', symbol);
             const company = await getCompanyBySymbol(symbol);
             
             if (company) {
-              console.log('Setting company details:', company);
               setSelectedCompany(company);
             } else {
               console.log('No company details returned');
