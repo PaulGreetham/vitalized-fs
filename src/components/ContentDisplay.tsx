@@ -8,6 +8,9 @@ import { IncomeStatementDisplay } from './IncomeStatementDisplay';
 import { CompanyOverviewDisplay } from './CompanyOverviewDisplay';
 import { BalanceSheetDisplay } from "./BalanceSheetDisplay";
 import { CashFlowDisplay } from "./CashFlowDisplay";
+import { SpinnerShadcn } from "@/components/ui/spinner-shadcn";
+import { CircularProgress } from "@/components/ui/circular-progress";
+
 interface ContentDisplayProps {
   selectedCompany: CompanySearchResult | null;
 }
@@ -24,63 +27,30 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     async function fetchData() {
       if (!selectedCompany) return;
       
-      if (!pathname.includes('/income')) return;
-
       setIsLoading(true);
       setError(null);
       
       try {
-        const data = await getIncomeStatement(selectedCompany.symbol);
-        setFinancialData(data);
+        const startTime = Date.now();
+        
+        if (pathname.includes('/income')) {
+          const data = await getIncomeStatement(selectedCompany.symbol);
+          setFinancialData(data);
+        } else if (pathname.includes('/balance')) {
+          const data = await getBalanceSheet(selectedCompany.symbol);
+          setBalanceSheetData(data);
+        } else if (pathname.includes('/cash-flow')) {
+          const data = await getCashFlowStatement(selectedCompany.symbol);
+          setCashFlowData(data);
+        }
+        
+        // Ensure minimum 2 second loading time
+        const elapsed = Date.now() - startTime;
+        if (elapsed < 2000) {
+          await new Promise(resolve => setTimeout(resolve, 2000 - elapsed));
+        }
       } catch (error) {
-        setError(error instanceof Error ? error.message : 'Failed to fetch financial data');
-        setFinancialData([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [selectedCompany, pathname]);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!selectedCompany) return;
-      
-      if (!pathname.includes('/balance')) return;
-
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const data = await getBalanceSheet(selectedCompany.symbol);
-        setBalanceSheetData(data);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : 'Failed to fetch balance sheet data');
-        setBalanceSheetData([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [selectedCompany, pathname]);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!selectedCompany) return;
-      
-      if (!pathname.includes('/cash-flow')) return;
-
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const data = await getCashFlowStatement(selectedCompany.symbol);
-        setCashFlowData(data);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : 'Failed to fetch cash flow data');
-        setCashFlowData([]);
+        setError(error instanceof Error ? error.message : 'Failed to fetch data');
       } finally {
         setIsLoading(false);
       }
@@ -100,12 +70,12 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
 
   // Loading and error states
   if (isLoading) return (
-    <>
+    <div className="transition-opacity duration-100 ease-in-out">
       <CompanyHeader company={selectedCompany} />
-      <div className="pt-32 px-8">
-        <div className="animate-pulse">Loading...</div>
+      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+        <CircularProgress size={60} />
       </div>
-    </>
+    </div>
   );
 
   if (error) return (

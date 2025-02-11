@@ -22,6 +22,26 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
     { type: 'Net Income', amount: latestStatement.netIncome, fill: 'var(--color-net-income)' },
   ];
 
+  const chartData = {
+    labels: data.map(item => new Date(item.date).getFullYear()),
+    datasets: [
+      {
+        label: 'Revenue',
+        data: data.map(item => item.revenue),
+        backgroundColor: 'hsl(var(--primary) / 0.5)',
+        borderColor: 'hsl(var(--primary))',
+        borderWidth: 1
+      },
+      {
+        label: 'Net Income',
+        data: data.map(item => item.netIncome),
+        backgroundColor: 'hsl(var(--secondary) / 0.5)',
+        borderColor: 'hsl(var(--secondary))',
+        borderWidth: 1
+      }
+    ]
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Income Statement for {latestStatement.symbol}</h2>
