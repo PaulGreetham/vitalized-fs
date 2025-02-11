@@ -42,4 +42,4 @@ export function BalanceSheetChart({ data }: BalanceSheetChartProps) {
       </CardContent>
     </Card>
   );
-} 
+}
