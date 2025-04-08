@@ -1,5 +1,4 @@
 import { IncomeStatement } from "@/types/financial";
-import { IncomeChart } from './charts/IncomeChart';
 
 interface Props {
   data: IncomeStatement[];
@@ -14,19 +13,9 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
 
   const latestStatement = data[0];
 
-  const incomeData = [
-    { type: 'Revenue', amount: latestStatement.revenue, fill: 'var(--color-revenue)' },
-    { type: 'Interest Income', amount: latestStatement.interestIncome, fill: 'var(--color-interest-income)' },
-    { type: 'Gross Profit', amount: latestStatement.grossProfit, fill: 'var(--color-gross-profit)' },
-    { type: 'Operating Income', amount: latestStatement.operatingIncome, fill: 'var(--color-operating-income)' },
-    { type: 'Net Income', amount: latestStatement.netIncome, fill: 'var(--color-net-income)' },
-  ];
-
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Income Statement for {latestStatement.symbol}</h2>
-      <IncomeChart data={incomeData} chartData={[]} />
-      <div className="grid gap-6">
         
         <div className="p-6 border rounded-lg bg-white shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Dates</h3>
@@ -182,6 +171,5 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
           </div>
         </div>
       </div>
-    </div>
   );
 } 

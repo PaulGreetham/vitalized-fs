@@ -1,5 +1,4 @@
 import { BalanceSheet } from "@/types/financial";
-import { BalanceSheetChart } from "./charts/BalanceSheetChart";
 
 interface Props {
   data: BalanceSheet[];
@@ -14,16 +13,9 @@ export function BalanceSheetDisplay({ data, isLoading, error }: Props) {
 
   const latestStatement = data[0];
 
-  const balanceData = [
-    { type: 'Total Assets', amount: latestStatement.totalAssets, fill: 'var(--chart-1)' },
-    { type: 'Total Liabilities', amount: latestStatement.totalLiabilities, fill: 'var(--chart-2)' },
-    { type: 'Total Equity', amount: latestStatement.totalEquity, fill: 'var(--chart-3)' },
-  ];
-
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Balance Sheet for {latestStatement.symbol}</h2>
-      <BalanceSheetChart data={balanceData} />
       
       <div className="grid gap-6">
         <div className="p-6 border rounded-lg bg-white shadow-sm">

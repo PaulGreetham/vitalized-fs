@@ -1,5 +1,4 @@
 import { CashFlowStatement } from "@/types/financial";
-import { CashFlowChart } from "./charts/CashFlowChart";
 
 interface Props {
   data: CashFlowStatement[];
@@ -14,16 +13,10 @@ export function CashFlowDisplay({ data, isLoading, error }: Props) {
 
   const latestStatement = data[0];
 
-  const cashFlowData = [
-    { type: 'Operating Cash Flow', amount: latestStatement.operatingCashFlow, fill: 'var(--chart-1)' },
-    { type: 'Investing Cash Flow', amount: latestStatement.netCashUsedForInvestingActivites, fill: 'var(--chart-2)' },
-    { type: 'Financing Cash Flow', amount: latestStatement.netCashUsedProvidedByFinancingActivities, fill: 'var(--chart-3)' },
-  ];
-
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Cash Flow Statement for {latestStatement.symbol}</h2>
-      <CashFlowChart data={cashFlowData} />
+      {/* <CashFlowChart data={cashFlowData} /> */}
       
       <div className="grid gap-6">
         <div className="p-6 border rounded-lg bg-white shadow-sm">
