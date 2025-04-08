@@ -57,13 +57,13 @@ export function DashboardLayout() {
           selectedCompany={selectedCompany}
         />
       </div>
-      <div className="fixed inset-0 pt-32">
+      <div className={`fixed inset-0 pt-32 ${!selectedCompany ? 'bg-gray-100' : ''}`}>
         <div className="flex h-full">
           <SidebarProvider>
-            <div className="w-64 flex-none border-r bg-white">
+            <div className={`w-64 flex-none border-r ${!selectedCompany ? 'opacity-40 pointer-events-none bg-gray-100' : 'bg-white'}`}>
               <AppSidebar selectedCompany={selectedCompany} />
             </div>
-            <main className="flex-1 overflow-y-auto pb-20">
+            <main className={`flex-1 overflow-y-auto pb-20 ${!selectedCompany ? 'bg-gray-100 opacity-40' : ''}`}>
               <ContentDisplay selectedCompany={selectedCompany} />
             </main>
           </SidebarProvider>
