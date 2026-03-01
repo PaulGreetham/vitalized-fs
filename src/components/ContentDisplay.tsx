@@ -8,7 +8,7 @@ import { IncomeStatementDisplay } from './IncomeStatementDisplay';
 import { CompanyOverviewDisplay } from './CompanyOverviewDisplay';
 import { BalanceSheetDisplay } from "./BalanceSheetDisplay";
 import { CashFlowDisplay } from "./CashFlowDisplay";
-import { CircularProgress } from "@/components/ui/circular-progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ContentDisplayProps {
   selectedCompany: CompanySearchResult | null;
@@ -18,20 +18,25 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
   const [financialData, setFinancialData] = useState<IncomeStatement[]>([]);
   const [balanceSheetData, setBalanceSheetData] = useState<BalanceSheet[]>([]);
   const [cashFlowData, setCashFlowData] = useState<CashFlowStatement[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     async function fetchData() {
       if (!selectedCompany) return;
+      const isFinancialRoute =
+        pathname.includes('/income') ||
+        pathname.includes('/balance') ||
+        pathname.includes('/cash-flow');
+      if (!isFinancialRoute) return;
       
-      setIsLoading(true);
+      setIsLoadingContent(true);
       setError(null);
       
       try {
         const startTime = Date.now();
-        
+
         if (pathname.includes('/income')) {
           const data = await getIncomeStatement(selectedCompany.symbol);
           setFinancialData(data);
@@ -42,16 +47,17 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
           const data = await getCashFlowStatement(selectedCompany.symbol);
           setCashFlowData(data);
         }
-        
-        // Ensure minimum 2 second loading time
+
+        // Keep a short minimum skeleton to smooth page transitions.
         const elapsed = Date.now() - startTime;
-        if (elapsed < 2000) {
-          await new Promise(resolve => setTimeout(resolve, 2000 - elapsed));
+        const remainingDelay = Math.max(0, 1000 - elapsed);
+        if (remainingDelay > 0) {
+          await new Promise((resolve) => setTimeout(resolve, remainingDelay));
         }
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Failed to fetch data');
       } finally {
-        setIsLoading(false);
+        setIsLoadingContent(false);
       }
     }
 
@@ -66,16 +72,6 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     );
   }
 
-  // Loading and error states
-  if (isLoading) return (
-    <div className="transition-opacity duration-100 ease-in-out">
-      <CompanyHeader company={selectedCompany} />
-      <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-        <CircularProgress size={60} />
-      </div>
-    </div>
-  );
-
   if (error) return (
     <>
       <CompanyHeader company={selectedCompany} />
@@ -87,6 +83,23 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
 
   // Content based on current route
   const renderContent = () => {
+    const showFinancialSkeleton =
+      isLoadingContent &&
+      (pathname.includes('/income') ||
+        pathname.includes('/balance') ||
+        pathname.includes('/cash-flow'));
+
+    if (showFinancialSkeleton) {
+      return (
+        <div className="grid gap-6 mt-10">
+          <Skeleton className="h-10 w-96" />
+          <Skeleton className="h-[300px] w-full" />
+          <Skeleton className="h-[220px] w-full" />
+          <Skeleton className="h-[220px] w-full" />
+        </div>
+      );
+    }
+
     if (pathname.includes('/overview')) {
       return <CompanyOverviewDisplay selectedCompany={selectedCompany} />;
     }
@@ -94,7 +107,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     if (pathname.includes('/income')) {
       return (
         <div className="grid gap-6 mt-10">
-          <IncomeStatementDisplay data={financialData} isLoading={isLoading} error={error} />
+          <IncomeStatementDisplay data={financialData} />
         </div>
       );
     }
@@ -102,7 +115,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     if (pathname.includes('/balance')) {
       return (
         <div className="grid gap-6 mt-10">
-          <BalanceSheetDisplay data={balanceSheetData} isLoading={isLoading} error={error} />
+          <BalanceSheetDisplay data={balanceSheetData} />
         </div>
       );
     }
@@ -110,7 +123,7 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     if (pathname.includes('/cash-flow')) {
       return (
         <div className="grid gap-6 mt-10">
-          <CashFlowDisplay data={cashFlowData} isLoading={isLoading} error={error} />
+          <CashFlowDisplay data={cashFlowData} />
         </div>
       );
     }

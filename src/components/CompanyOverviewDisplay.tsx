@@ -1,5 +1,11 @@
 import React from 'react';
 import { CompanySearchResult } from '@/types/search';
+import {
+  formatCurrency,
+  formatCurrencyCompact,
+  formatHumanDate,
+  formatNumberCompact,
+} from "@/lib/formatters";
 
 interface CompanyOverviewDisplayProps {
   selectedCompany: CompanySearchResult;
@@ -15,11 +21,11 @@ export function CompanyOverviewDisplay({ selectedCompany }: CompanyOverviewDispl
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Stock Price</h4>
-              <p className="mt-1 text-xl text-gray-900">${selectedCompany.price?.toFixed(2) ?? 'N/A'}</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrency(selectedCompany.price)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Market Cap</h4>
-              <p className="mt-1 text-xl text-gray-900">${selectedCompany.mktCap ? (selectedCompany.mktCap / 1_000_000_000).toFixed(2) : 'N/A'}B</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(selectedCompany.mktCap)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Beta</h4>
@@ -27,11 +33,11 @@ export function CompanyOverviewDisplay({ selectedCompany }: CompanyOverviewDispl
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Average Volume</h4>
-              <p className="mt-1 text-xl text-gray-900">{selectedCompany.volAvg ? (selectedCompany.volAvg / 1_000_000).toFixed(1) : 'N/A'}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatNumberCompact(selectedCompany.volAvg)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Dividend</h4>
-              <p className="mt-1 text-xl text-gray-900">${selectedCompany.lastDiv?.toFixed(2) ?? 'N/A'}</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrency(selectedCompany.lastDiv)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">52-Week Range</h4>
@@ -65,7 +71,7 @@ export function CompanyOverviewDisplay({ selectedCompany }: CompanyOverviewDispl
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">IPO Date</h4>
-              <p className="mt-1 text-gray-900">{selectedCompany.ipoDate ? new Date(selectedCompany.ipoDate).toLocaleDateString() : 'N/A'}</p>
+              <p className="mt-1 text-gray-900">{formatHumanDate(selectedCompany.ipoDate)}</p>
             </div>
             <div className="flex flex-col md:col-span-2 lg:col-span-3">
               <h4 className="text-sm font-medium text-gray-500">Address</h4>

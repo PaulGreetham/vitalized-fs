@@ -54,6 +54,7 @@ export function AppSidebar({ selectedCompany }: AppSidebarProps) {
             <Link
               key={link.href}
               href={link.href}
+              scroll={false}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-gray-100 ${
                 pathname.includes(link.pattern) ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900'
               }`}

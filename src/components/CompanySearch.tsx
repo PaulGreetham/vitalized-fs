@@ -44,24 +44,24 @@ const RESULTS_PER_PAGE = 10;
 
 export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
   const [searchResults, setSearchResults] = useState<CompanySearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedExchange, setSelectedExchange] = useState<Exchange>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showTooltip, setShowTooltip] = useState(true);
-  const [hasSearched, setHasSearched] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('hasSearched') === 'true';
-    }
-    return false;
-  });
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('hasSearched', hasSearched.toString());
-    }
-  }, [hasSearched]);
+    setIsMounted(true);
+    const persistedHasSearched = localStorage.getItem("hasSearched");
+    setHasSearched(persistedHasSearched === "true");
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    localStorage.setItem("hasSearched", hasSearched.toString());
+  }, [hasSearched, isMounted]);
 
   useEffect(() => {
     if (!selectedCompany && !hasSearched) {
@@ -77,7 +77,6 @@ export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
       return;
     }
 
-    setIsLoading(true);
     try {
       const results = await searchCompanies(query, 100);
       setSearchResults(results);
@@ -90,8 +89,6 @@ export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
     } catch (error) {
       console.error('Search failed:', error);
       setSearchResults([]);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -126,7 +123,7 @@ export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
         </label>
         <div className="flex gap-4">
           <TooltipProvider>
-            <Tooltip open={!selectedCompany && showTooltip && !hasSearched}>
+            <Tooltip open={isMounted && !selectedCompany && showTooltip && !hasSearched}>
               <TooltipTrigger asChild>
                 <div className="flex-1">
                   <Input
@@ -172,8 +169,6 @@ export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
         </div>
       </div>
 
-      {isLoading && <div>Loading...</div>}
-      
       {currentResults.length > 0 && (
         <div className="space-y-4">
           <div className="border rounded-md">

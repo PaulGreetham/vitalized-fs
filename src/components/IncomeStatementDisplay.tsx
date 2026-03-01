@@ -1,36 +1,52 @@
 import { IncomeStatement } from "@/types/financial";
+import { FinancialAreaChart } from "@/components/charts/FinancialAreaChart";
+import {
+  formatCurrencyCompact,
+  formatHumanDate,
+  formatHumanDateTime,
+} from "@/lib/formatters";
 
 interface Props {
   data: IncomeStatement[];
-  isLoading?: boolean;
-  error?: string | null;
 }
 
-export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+export function IncomeStatementDisplay({ data }: Props) {
   if (!data?.length) return <div>No data available</div>;
 
   const latestStatement = data[0];
+  const chartData = [...data].reverse().map((statement) => ({
+    period: statement.calendarYear || statement.date,
+    revenue: statement.revenue,
+    netIncome: statement.netIncome,
+  }));
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Income Statement for {latestStatement.symbol}</h2>
+      <FinancialAreaChart
+        title="Revenue and Net Income Trend"
+        data={chartData}
+        xKey="period"
+        series={[
+          { key: "revenue", label: "Revenue", color: "hsl(var(--chart-1))" },
+          { key: "netIncome", label: "Net Income", color: "hsl(var(--chart-2))" },
+        ]}
+      />
         
         <div className="p-6 border rounded-lg bg-white shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Dates</h3>
           <div className="grid grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Date</h4>
-              <p className="mt-1 text-xl text-gray-900">{latestStatement.date}</p>
+              <p className="mt-1 text-xl text-gray-900">{formatHumanDate(latestStatement.date)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Filling Date</h4>
-              <p className="mt-1 text-xl text-gray-900">{latestStatement.fillingDate}</p>
+              <p className="mt-1 text-xl text-gray-900">{formatHumanDate(latestStatement.fillingDate)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Accepted Date</h4>
-              <p className="mt-1 text-xl text-gray-900">{latestStatement.acceptedDate}</p>
+              <p className="mt-1 text-xl text-gray-900">{formatHumanDateTime(latestStatement.acceptedDate)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Calendar Year</h4>
@@ -48,27 +64,27 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
           <div className="grid grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Revenue</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.revenue / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.revenue)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Interest Income</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.interestIncome / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.interestIncome)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Gross Profit</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.grossProfit / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.grossProfit)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Operating Income</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.operatingIncome / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.operatingIncome)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Income Before Tax</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.incomeBeforeTax / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.incomeBeforeTax)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Net Income</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.netIncome / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.netIncome)}</p>
             </div>
           </div>
         </div>
@@ -78,39 +94,39 @@ export function IncomeStatementDisplay({ data, isLoading, error }: Props) {
           <div className="grid grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Cost of Revenue</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.costOfRevenue / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.costOfRevenue)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">R&D Expenses</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.researchAndDevelopmentExpenses / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.researchAndDevelopmentExpenses)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">SG&A Expenses</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.sellingGeneralAndAdministrativeExpenses / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.sellingGeneralAndAdministrativeExpenses)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Other Expenses</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.otherExpenses / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.otherExpenses)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Operating Expenses</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.operatingExpenses / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.operatingExpenses)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Cost and Expenses</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.costAndExpenses / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.costAndExpenses)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Interest Expense</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.interestExpense / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.interestExpense)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Depreciation and Amortization</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.depreciationAndAmortization / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.depreciationAndAmortization)}</p>
             </div>
             <div className="flex flex-col">
               <h4 className="text-sm font-medium text-gray-500">Income Tax Expense</h4>
-              <p className="mt-1 text-xl text-gray-900">${(latestStatement.incomeTaxExpense / 1_000_000).toFixed(2)}M</p>
+              <p className="mt-1 text-xl text-gray-900">{formatCurrencyCompact(latestStatement.incomeTaxExpense)}</p>
             </div>
           </div>
         </div>

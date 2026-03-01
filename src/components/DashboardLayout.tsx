@@ -10,14 +10,21 @@ import { Header } from "@/components/Header";
 import { CompanySearch } from "@/components/CompanySearch";
 import { ContentDisplay } from "@/components/ContentDisplay";
 
+function extractSymbolFromPath(pathname: string | null): string | null {
+  if (!pathname) return null;
+  const match = pathname.match(/\/(overview|income|balance|cash-flow)\/([A-Z]+)(?:\.[A-Z])?/);
+  return match?.[2] ?? null;
+}
+
 export function DashboardLayout() {
   const [selectedCompany, setSelectedCompany] = useState<CompanySearchResult | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const routeSymbol = extractSymbolFromPath(pathname);
 
   const handleCompanySelect = (company: CompanySearchResult) => {
     setSelectedCompany(company);
-    router.push(`/overview/${company.symbol}`);
+    router.push(`/overview/${company.symbol}`, { scroll: false });
   };
 
   // Extract company symbol from URL and set selected company if needed
@@ -25,12 +32,20 @@ export function DashboardLayout() {
     async function fetchCompanyDetails() {
       
       if (pathname && selectedCompany === null) {
-        const match = pathname.match(/\/(overview|income|balance|cash-flow)\/([A-Z]+)(?:\.[A-Z])?/);
-        
-        if (match && match[2]) {
+        if (routeSymbol) {
+          // Keep layout stable while full company details are loading.
+          setSelectedCompany((prev) =>
+            prev ?? {
+              symbol: routeSymbol,
+              name: routeSymbol,
+              currency: "",
+              exchangeShortName: "",
+              stockExchange: "",
+            }
+          );
+
           try {
-            const symbol = match[2];
-            const company = await getCompanyBySymbol(symbol);
+            const company = await getCompanyBySymbol(routeSymbol);
             
             if (company) {
               setSelectedCompany(company);
@@ -39,14 +54,14 @@ export function DashboardLayout() {
             }
           } catch (error) {
             console.error('Failed to fetch company details:', error);
-            router.push('/');
+            router.push('/', { scroll: false });
           }
         }
       }
     }
 
     fetchCompanyDetails();
-  }, [pathname, selectedCompany, router]);
+  }, [pathname, routeSymbol, selectedCompany, router]);
 
   return (
     <>
@@ -57,13 +72,13 @@ export function DashboardLayout() {
           selectedCompany={selectedCompany}
         />
       </div>
-      <div className={`fixed inset-0 pt-32 ${!selectedCompany ? 'bg-gray-100' : ''}`}>
+      <div className={`fixed inset-0 pt-32 ${!selectedCompany && !routeSymbol ? 'bg-gray-100' : ''}`}>
         <div className="flex h-full">
           <SidebarProvider>
-            <div className={`w-64 flex-none border-r ${!selectedCompany ? 'opacity-40 pointer-events-none bg-gray-100' : 'bg-white'}`}>
+            <div className={`w-64 flex-none border-r ${!selectedCompany && !routeSymbol ? 'opacity-40 pointer-events-none bg-gray-100' : 'bg-white'}`}>
               <AppSidebar selectedCompany={selectedCompany} />
             </div>
-            <main className={`flex-1 overflow-y-auto pb-20 ${!selectedCompany ? 'bg-gray-100 opacity-40' : ''}`}>
+            <main className={`flex-1 overflow-y-auto pb-20 ${!selectedCompany && !routeSymbol ? 'bg-gray-100 opacity-40' : ''}`}>
               <ContentDisplay selectedCompany={selectedCompany} />
             </main>
           </SidebarProvider>
