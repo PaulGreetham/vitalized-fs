@@ -86,8 +86,7 @@ export function CompanySearch({ onCompanySelect, selectedCompany }: Props) {
         setHasSearched(true);
         setShowTooltip(false);
       }
-    } catch (error) {
-      console.error('Search failed:', error);
+    } catch {
       setSearchResults([]);
     }
   }, []);

@@ -47,8 +47,6 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
           const data = await getCashFlowStatement(selectedCompany.symbol);
           setCashFlowData(data);
         }
-
-        // Keep a short minimum skeleton to smooth page transitions.
         const elapsed = Date.now() - startTime;
         const remainingDelay = Math.max(0, 1000 - elapsed);
         if (remainingDelay > 0) {
@@ -67,7 +65,6 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
   if (!selectedCompany) {
     return (
       <div className="h-full w-full">
-        {/* Empty state with no welcome message */}
       </div>
     );
   }
@@ -81,7 +78,6 @@ export function ContentDisplay({ selectedCompany }: ContentDisplayProps) {
     </>
   );
 
-  // Content based on current route
   const renderContent = () => {
     const showFinancialSkeleton =
       isLoadingContent &&

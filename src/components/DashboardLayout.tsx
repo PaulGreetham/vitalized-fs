@@ -27,7 +27,6 @@ export function DashboardLayout() {
     router.push(`/overview/${company.symbol}`, { scroll: false });
   };
 
-  // Extract company symbol from URL and set selected company if needed
   useEffect(() => {
     async function fetchCompanyDetails() {
       
@@ -49,11 +48,8 @@ export function DashboardLayout() {
             
             if (company) {
               setSelectedCompany(company);
-            } else {
-              console.log('No company details returned');
             }
-          } catch (error) {
-            console.error('Failed to fetch company details:', error);
+          } catch {
             router.push('/', { scroll: false });
           }
         }
